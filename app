@@ -1,0 +1,1127 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>defini.</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --bg-card: #0a0a0a;
+            --accent: #14b8a6;
+            --accent-glow: rgba(20, 184, 166, 0.4);
+            color-scheme: dark;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: #f4f4f5;
+            -webkit-tap-highlight-color: transparent; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overscroll-behavior-y: none;
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Premium Animations */
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(30px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes laserScan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        
+        /* Animaciones del Splash Screen */
+        @keyframes splashText {
+            0% { opacity: 0; filter: blur(10px); transform: scale(0.95); }
+            100% { opacity: 1; filter: blur(0); transform: scale(1); }
+        }
+        @keyframes splashDot {
+            0% { opacity: 0; transform: scale(0); }
+            60% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Animación de Celebración (Meta alcanzada) */
+        @keyframes popPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(251, 191, 36, 0)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(251, 191, 36, 0.6)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(251, 191, 36, 0)); }
+        }
+        .celebration-ring {
+            animation: popPulse 2s infinite ease-in-out;
+        }
+
+        .animate-fade-in { animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-fade-in-delayed { animation: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; opacity: 0; }
+        
+        .animate-splash-text { animation: splashText 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .animate-splash-dot { opacity: 0; animation: splashDot 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards; }
+        .animate-fade-out { animation: fadeOut 0.5s ease forwards; }
+
+        .animate-laser { 
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            box-shadow: 0 0 15px 2px var(--accent);
+            animation: laserScan 2s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px #0a0a0a inset !important;
+            -webkit-text-fill-color: #ffffff !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .premium-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+            color: #ffffff !important;
+        }
+        .premium-input:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
+            outline: none;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px; width: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            cursor: pointer;
+            margin-top: -8px;
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:active {
+            transform: scale(1.2);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useRef } = React;
+
+        const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMsg = errorData?.error?.message || `Error HTTP ${response.status}`;
+                    const error = new Error(errorMsg);
+                    error.status = response.status;
+                    throw error;
+                }
+                return await response.json();
+            } catch (error) {
+                if (error.status && error.status >= 400 && error.status < 500) throw error;
+                if (retries === 0) throw error;
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return fetchWithRetry(url, options, retries - 1, delay * 2);
+            }
+        };
+
+        const Icon = ({ name, size = 24, className = '', color = "currentColor", strokeWidth = 1.5 }) => {
+            const spanRef = useRef(null);
+            useEffect(() => {
+                if (spanRef.current && window.lucide) {
+                    spanRef.current.innerHTML = `<i data-lucide="${name}"></i>`;
+                    window.lucide.createIcons({
+                        root: spanRef.current,
+                        attrs: { class: className, 'stroke-width': strokeWidth, stroke: color },
+                        nameAttr: 'data-lucide'
+                    });
+                }
+            }, [name, className, color, strokeWidth]);
+            
+            return (
+                <span 
+                    ref={spanRef} 
+                    style={{ width: size, height: size, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }} 
+                    className={className}
+                ></span>
+            );
+        };
+
+        const getLocalYYYYMMDD = (dateObj = new Date()) => {
+            return `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+        };
+
+        /* -------------------------------------------------------------------------- */
+        /* PANTALLA SPLASH                                                            */
+        /* -------------------------------------------------------------------------- */
+        function SplashScreen({ onComplete, goal }) {
+            const [isFadingOut, setIsFadingOut] = useState(false);
+
+            useEffect(() => {
+                const fadeTimer = setTimeout(() => setIsFadingOut(true), 2200);
+                const completeTimer = setTimeout(() => onComplete(), 2700);
+                return () => { clearTimeout(fadeTimer); clearTimeout(completeTimer); };
+            }, [onComplete]);
+
+            const dotColor = goal === 'bulk' ? 'text-indigo-400' : 'text-teal-400';
+
+            return (
+                <div className={`fixed inset-0 bg-black flex items-center justify-center z-50 ${isFadingOut ? 'animate-fade-out' : ''}`}>
+                    <div className="text-6xl font-light tracking-tighter flex items-center justify-center select-none pb-16">
+                        <span className="animate-splash-text text-white">defini</span>
+                        <span className={`animate-splash-dot ${dotColor}`}>.</span>
+                    </div>
+                </div>
+            );
+        }
+
+        function App() {
+            const [profile, setProfile] = useState(() => {
+                try { return JSON.parse(localStorage.getItem('macroProfile')) || null; } 
+                catch { return null; }
+            });
+            const [currentDate, setCurrentDate] = useState(getLocalYYYYMMDD());
+            const [dayData, setDayData] = useState(() => {
+                try { return JSON.parse(localStorage.getItem(`macroData_${getLocalYYYYMMDD()}`)) || { foods: [], water: 0 }; } 
+                catch { return { foods: [], water: 0 }; }
+            });
+            const [apiKey, setApiKey] = useState(() => localStorage.getItem('macroApiKey') || "");
+            const [currentView, setCurrentView] = useState('splash');
+
+            useEffect(() => {
+                if (profile) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(`macroData_${currentDate}`)) || { foods: [], water: 0 };
+                        setDayData(data);
+                    } catch { setDayData({ foods: [], water: 0 }); }
+                }
+            }, [currentDate, profile]);
+
+            const handleSplashComplete = () => setCurrentView(profile ? 'dashboard' : 'setup');
+
+            const saveProfile = (data) => {
+                setProfile(data);
+                localStorage.setItem('macroProfile', JSON.stringify(data));
+                setCurrentView('dashboard');
+            };
+
+            const resetProfile = () => {
+                localStorage.clear();
+                setProfile(null);
+                setApiKey("");
+                setDayData({ foods: [], water: 0 });
+                setCurrentDate(getLocalYYYYMMDD());
+                setCurrentView('setup');
+            };
+
+            const updateDayData = (updates) => {
+                const newData = { ...dayData, ...updates };
+                setDayData(newData);
+                localStorage.setItem(`macroData_${currentDate}`, JSON.stringify(newData));
+            };
+
+            const addFood = (foodEntry) => {
+                const currentFoods = Array.isArray(dayData.foods) ? dayData.foods : [];
+                updateDayData({ foods: [...currentFoods, { ...foodEntry, id: Date.now() }] });
+                setCurrentView('dashboard');
+            };
+
+            const deleteFood = (id) => {
+                const currentFoods = Array.isArray(dayData.foods) ? dayData.foods : [];
+                updateDayData({ foods: currentFoods.filter(f => f.id !== id) });
+            };
+
+            const saveApiKey = (key) => {
+                setApiKey(key);
+                localStorage.setItem('macroApiKey', key);
+            };
+
+            if (currentView === 'splash') return <SplashScreen onComplete={handleSplashComplete} goal={profile?.goal} />;
+            if (currentView === 'setup') return <SetupScreen onSaveProfile={saveProfile} />;
+            if (currentView === 'scanner') return (
+                <ScannerScreen onBack={() => setCurrentView('dashboard')} onAddFood={addFood} profile={profile} foods={dayData.foods || []} apiKey={apiKey} saveApiKey={saveApiKey}/>
+            );
+
+            return (
+                <Dashboard profile={profile} dayData={dayData} currentDate={currentDate} setCurrentDate={setCurrentDate}
+                    onOpenScanner={() => setCurrentView('scanner')} onDeleteFood={deleteFood} onSetWater={(amount) => updateDayData({ water: amount })}
+                    onAddFood={addFood} onResetProfile={resetProfile} apiKey={apiKey} saveApiKey={saveApiKey} />
+            );
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* PANTALLA SETUP                                                             */
+        /* -------------------------------------------------------------------------- */
+        function SetupScreen({ onSaveProfile }) {
+            const [formData, setFormData] = useState({ name: '', weight: '', height: '', age: '', gender: 'M', activity: '1.2', goal: 'cut' });
+
+            const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+            const calculateMacros = (e) => {
+                e.preventDefault();
+                const w = parseFloat(formData.weight), h = parseFloat(formData.height), a = parseFloat(formData.age), act = parseFloat(formData.activity);
+                let bmr = (10 * w) + (6.25 * h) - (5 * a);
+                bmr = formData.gender === 'M' ? bmr + 5 : bmr - 161;
+                const tdee = bmr * act;
+                let targetCals, protein, fat, carbs;
+
+                if (formData.goal === 'cut') {
+                    targetCals = Math.round(tdee - 500);
+                    protein = Math.round(w * 2.2);
+                    fat = Math.round(w * 0.8);
+                } else {
+                    targetCals = Math.round(tdee + 400);
+                    protein = Math.round(w * 2.0);
+                    fat = Math.round(w * 1.0);
+                }
+
+                carbs = Math.max(0, Math.round((targetCals - ((protein * 4) + (fat * 9))) / 4));
+                const waterGlasses = Math.max(6, Math.round((w * 35) / 250));
+
+                onSaveProfile({ name: formData.name, goal: formData.goal, weight: w, cals: targetCals, protein, carbs, fat, waterGlasses });
+            };
+
+            return (
+                <div className="max-w-md mx-auto p-6 min-h-screen flex flex-col justify-center animate-fade-in relative overflow-x-hidden">
+                    <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full blur-[100px] pointer-events-none transition-colors duration-1000 ${formData.goal === 'cut' ? 'bg-teal-500/10' : 'bg-indigo-500/10'}`}></div>
+
+                    <div className="mb-8 text-center relative z-10">
+                        <h1 className="text-5xl font-light tracking-tighter mb-2 text-white">defini<span className={formData.goal === 'cut' ? 'text-teal-400' : 'text-indigo-400'}>.</span></h1>
+                        <p className="text-zinc-400 text-sm font-light mt-4">Configura tu perfil metabólico</p>
+                    </div>
+
+                    <form onSubmit={calculateMacros} className="space-y-4 relative z-10 pb-10">
+                        <div className="mb-4 space-y-1.5">
+                            <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Tu Objetivo Principal</label>
+                            <div className="flex gap-2 bg-white/5 p-1 rounded-2xl border border-white/5">
+                                <button type="button" onClick={() => setFormData({...formData, goal: 'cut'})}
+                                    className={`flex-1 py-3.5 text-[11px] font-bold uppercase tracking-widest rounded-xl transition-all duration-300 ${formData.goal === 'cut' ? 'bg-teal-400 text-black shadow-[0_0_15px_rgba(20,184,166,0.3)] scale-[1.02]' : 'text-zinc-500 hover:text-white'}`}>
+                                    Definición
+                                </button>
+                                <button type="button" onClick={() => setFormData({...formData, goal: 'bulk'})}
+                                    className={`flex-1 py-3.5 text-[11px] font-bold uppercase tracking-widest rounded-xl transition-all duration-300 ${formData.goal === 'bulk' ? 'bg-indigo-400 text-black shadow-[0_0_15px_rgba(99,102,241,0.3)] scale-[1.02]' : 'text-zinc-500 hover:text-white'}`}>
+                                    Volumen
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5 pt-2">
+                            <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Tu Nombre</label>
+                            <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full premium-input bg-transparent rounded-2xl p-4 text-white outline-none font-light" placeholder="Ej. Marcos" />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Peso (kg)</label>
+                                <input required type="number" step="0.1" name="weight" value={formData.weight} onChange={handleChange} className="w-full premium-input bg-transparent rounded-2xl p-4 text-white outline-none font-light" placeholder="75" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Altura (cm)</label>
+                                <input required type="number" name="height" value={formData.height} onChange={handleChange} className="w-full premium-input bg-transparent rounded-2xl p-4 text-white outline-none font-light" placeholder="180" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Edad</label>
+                                <input required type="number" name="age" value={formData.age} onChange={handleChange} className="w-full premium-input bg-transparent rounded-2xl p-4 text-white outline-none font-light" placeholder="25" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Sexo</label>
+                                <select name="gender" value={formData.gender} onChange={handleChange} className="w-full premium-input bg-transparent rounded-2xl p-4 text-white outline-none font-light appearance-none">
+                                    <option value="M">Hombre</option>
+                                    <option value="F">Mujer</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Nivel de Actividad</label>
+                            <select name="activity" value={formData.activity} onChange={handleChange} className="w-full premium-input bg-transparent rounded-2xl p-4 text-white outline-none font-light appearance-none">
+                                <option value="1.2">Sedentario (Oficina)</option>
+                                <option value="1.375">Ligero (1-3 días)</option>
+                                <option value="1.55">Moderado (3-5 días)</option>
+                                <option value="1.725">Activo (6-7 días)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" className="w-full mt-8 text-black font-medium text-[15px] tracking-wide p-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-colors shadow-[0_0_20px_rgba(255,255,255,0.1)] bg-white hover:bg-zinc-200">
+                            INICIAR PLAN <Icon name="arrow-right" size={18} />
+                        </button>
+                    </form>
+                </div>
+            );
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* PANTALLA PRINCIPAL DASHBOARD                                               */
+        /* -------------------------------------------------------------------------- */
+        function Dashboard({ profile, dayData, currentDate, setCurrentDate, onOpenScanner, onDeleteFood, onSetWater, onAddFood, onResetProfile, apiKey, saveApiKey }) {
+            const [isManualModalOpen, setIsManualModalOpen] = useState(false);
+            const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+            
+            const foods = Array.isArray(dayData.foods) ? dayData.foods : [];
+            const consumedCals = foods.reduce((sum, f) => sum + (Number(f.calories) || 0), 0);
+            const consumedProtein = foods.reduce((sum, f) => sum + (Number(f.protein) || 0), 0);
+            const consumedCarbs = foods.reduce((sum, f) => sum + (Number(f.carbs) || 0), 0);
+            const consumedFat = foods.reduce((sum, f) => sum + (Number(f.fat) || 0), 0);
+
+            const changeDate = (daysToAdd) => {
+                const [y, m, d] = currentDate.split('-').map(Number);
+                const dateObj = new Date(y, m - 1, d);
+                dateObj.setDate(dateObj.getDate() + daysToAdd);
+                setCurrentDate(getLocalYYYYMMDD(dateObj));
+            };
+
+            const getFriendlyDate = () => {
+                const today = getLocalYYYYMMDD();
+                if (currentDate === today) return 'Hoy';
+                const [y, m, d] = currentDate.split('-').map(Number);
+                const dateObj = new Date(y, m - 1, d);
+                const yesterdayObj = new Date();
+                yesterdayObj.setDate(yesterdayObj.getDate() - 1);
+                if (currentDate === getLocalYYYYMMDD(yesterdayObj)) return 'Ayer';
+                return dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+            };
+
+            const safeTargetCals = profile.cals || 2000;
+            const calsRemaining = Math.round(safeTargetCals - consumedCals) || 0; 
+            const ringPercentage = Math.min(100, Math.max(0, (consumedCals / safeTargetCals) * 100)) || 0;
+            
+            const isGoalReached = calsRemaining === 0;
+            const isOverCal = calsRemaining < 0;
+            const isBulk = profile.goal === 'bulk';
+            const themeColor = isBulk ? '#818cf8' : '#14b8a6';
+
+            const ringStrokeColor = isOverCal ? "#ef4444" : (isGoalReached ? "#fbbf24" : themeColor);
+
+            const handleManualSubmit = (mName, totalGrams, totalCals, totalProt) => {
+                if (!mName || totalCals <= 0) return;
+                onAddFood({ 
+                    name: mName, 
+                    grams: totalGrams, 
+                    calories: totalCals, 
+                    protein: totalProt, 
+                    carbs: 0, 
+                    fat: 0 
+                });
+                setIsManualModalOpen(false);
+            };
+
+            return (
+                <div className="max-w-md mx-auto pb-32 min-h-screen flex flex-col relative font-light overflow-x-hidden">
+                    <div className="pt-12 pb-4 px-6 flex items-center justify-between sticky top-0 z-30 glass-card rounded-b-[32px] border-t-0 border-x-0 border-b border-white/5 animate-fade-in">
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2 mb-0.5">
+                                <span className="text-[11px] font-medium text-white tracking-widest opacity-80">Hola, {profile.name || 'Usuario'}</span>
+                                <span className={`text-[8px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-sm ${isBulk ? 'bg-indigo-500/20 text-indigo-400' : 'bg-teal-500/20 text-teal-400'}`}>
+                                    {isBulk ? 'VOLUMEN' : 'DEFINICIÓN'}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-1.5 text-zinc-300">
+                                <button onClick={() => changeDate(-1)} className="p-1 hover:text-white transition-colors active:bg-white/5 rounded-full"><Icon name="chevron-left" size={16} /></button>
+                                <div className="relative">
+                                    <span className="text-[15px] text-white capitalize font-medium tracking-wide flex items-center gap-1">
+                                        {getFriendlyDate()} <Icon name="calendar" size={12} className="text-zinc-500" />
+                                    </span>
+                                    <input type="date" value={currentDate} onChange={(e) => setCurrentDate(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer w-full" />
+                                </div>
+                                <button onClick={() => changeDate(1)} className="p-1 hover:text-white transition-colors active:bg-white/5 rounded-full"><Icon name="chevron-right" size={16} /></button>
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <button onClick={() => setIsSettingsOpen(true)} className="w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-white transition-colors rounded-full active:bg-white/5 relative">
+                                <Icon name="settings" size={20} />
+                                {!apiKey && <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-black shadow-[0_0_10px_rgba(239,68,68,0.8)]"></div>}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center py-10 w-full animate-fade-in-delayed relative">
+                        <div className={`absolute w-40 h-40 rounded-full blur-[80px] opacity-20 pointer-events-none ${isOverCal ? 'bg-red-500' : (isGoalReached ? 'bg-yellow-500' : (isBulk ? 'bg-indigo-500' : 'bg-teal-500'))}`}></div>
+                        
+                        <div className={`relative flex items-center justify-center w-64 h-64 ${isGoalReached ? 'celebration-ring rounded-full' : ''}`}>
+                            <svg className="absolute w-full h-full transform -rotate-90 drop-shadow-2xl" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="46" fill="transparent" stroke="rgba(255,255,255,0.03)" strokeWidth="2" />
+                                <circle 
+                                    cx="50" cy="50" r="46" fill="transparent" 
+                                    stroke={ringStrokeColor} 
+                                    strokeWidth="3.5" 
+                                    strokeDasharray={`${ringPercentage * 2.89} 289`} 
+                                    strokeLinecap="round" 
+                                    style={{ transition: 'stroke-dasharray 1.5s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.5s ease' }}
+                                />
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pb-2">
+                                {isGoalReached ? (
+                                    <div className="mb-1 text-yellow-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]">
+                                        <Icon name="check-circle" size={56} />
+                                    </div>
+                                ) : (
+                                    <span className={`text-6xl font-light tracking-tighter ${isOverCal ? 'text-red-400' : 'text-white'}`} style={{ fontFeatureSettings: '"tnum"' }}>
+                                        {Math.abs(calsRemaining)}
+                                    </span>
+                                )}
+                                
+                                <span className={`text-[10px] uppercase tracking-[0.2em] mt-2 ${isGoalReached ? 'text-yellow-400 font-bold' : 'text-zinc-500'}`}>
+                                    {isOverCal ? 'Kcal Excedidas' : (isGoalReached ? '¡Meta Lograda!' : 'Kcal Restantes')}
+                                </span>
+                                <div className="mt-4 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full text-[11px] text-zinc-300 backdrop-blur-sm">
+                                    Meta: <span className="text-white font-medium">{profile.cals}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="px-6 mb-8 animate-fade-in-delayed" style={{animationDelay: '0.2s'}}>
+                        <div className="grid grid-cols-3 gap-3">
+                            <MacroCard label="Proteína" current={consumedProtein} max={profile.protein} themeColor={themeColor} isPrimary={true} />
+                            <MacroCard label="Carbos" current={consumedCarbs} max={profile.carbs} themeColor={themeColor} />
+                            <MacroCard label="Grasas" current={consumedFat} max={profile.fat} themeColor={themeColor} />
+                        </div>
+                    </div>
+
+                    <div className="px-6 mb-10 animate-fade-in-delayed" style={{animationDelay: '0.3s'}}>
+                        <div className="glass-card p-6 rounded-[28px]">
+                            <div className="flex justify-between items-end mb-6">
+                                <div>
+                                    <h3 className="text-[15px] font-medium text-white mb-1">Hidratación</h3>
+                                    <p className="text-xs text-zinc-500">{(dayData.water || 0) * 250}ml consumidos hoy</p>
+                                </div>
+                                <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full ${isBulk ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20' : 'bg-teal-500/10 text-teal-400 border border-teal-500/20'}`}>
+                                    Meta: {profile.waterGlasses}
+                                </span>
+                            </div>
+                            <div className="flex flex-wrap justify-center gap-3">
+                                {Array.from({ length: profile.waterGlasses || 6 }).map((_, i) => {
+                                    const isFilled = i < (dayData.water || 0);
+                                    const activeClasses = isBulk 
+                                        ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 scale-105 shadow-[0_0_15px_rgba(99,102,241,0.2)]'
+                                        : 'bg-teal-500/20 text-teal-400 border border-teal-500/30 scale-105 shadow-[0_0_15px_rgba(20,184,166,0.2)]';
+                                    
+                                    return (
+                                        <button 
+                                            key={i}
+                                            onClick={() => onSetWater(isFilled ? i : i + 1)}
+                                            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 flex-shrink-0 ${isFilled ? activeClasses : 'bg-white/5 text-zinc-600 border border-white/5 active:scale-95'}`}
+                                        >
+                                            <Icon name="droplet" size={20} className={isFilled ? 'fill-current' : ''} />
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="px-6 flex-1 animate-fade-in-delayed" style={{animationDelay: '0.4s'}}>
+                        <div className="flex justify-between items-center mb-5">
+                            <h3 className="text-[15px] font-medium text-white">Diario de Comidas</h3>
+                            <button onClick={() => setIsManualModalOpen(true)} className="text-xs text-zinc-400 flex items-center gap-1.5 hover:text-white transition-colors bg-white/5 px-3 py-1.5 rounded-full border border-white/10 active:bg-white/10">
+                                <Icon name="plus" size={12} /> Ajuste manual
+                            </button>
+                        </div>
+                        
+                        {foods.length === 0 ? (
+                            <div className="text-center py-12 border border-white/5 rounded-[28px] border-dashed bg-white/[0.02]">
+                                <Icon name="utensils-crossed" size={32} className="mx-auto text-zinc-700 mb-3" />
+                                <p className="text-sm text-zinc-500">Aún no hay registros hoy.</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-3">
+                                {foods.map(food => (
+                                    <div key={food.id} className="glass-card p-4 rounded-2xl flex justify-between items-center group">
+                                        <div>
+                                            <p className="text-sm font-medium text-white mb-0.5">{food.name}</p>
+                                            <p className="text-xs text-zinc-500">{food.grams > 0 ? `${food.grams}g • ` : ''}<span className="text-zinc-300">{Math.round(food.calories)} kcal</span></p>
+                                        </div>
+                                        <div className="flex items-center gap-4">
+                                            <div className="text-right">
+                                                <p className="text-xs font-medium text-zinc-300">{Math.round(food.protein)}g P</p>
+                                            </div>
+                                            <button onClick={() => onDeleteFood(food.id)} className="w-8 h-8 flex items-center justify-center text-zinc-600 hover:text-red-400 transition-colors bg-white/5 rounded-full">
+                                                <Icon name="trash-2" size={14} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="fixed bottom-8 left-0 right-0 flex justify-center z-30 pointer-events-none animate-fade-in-delayed" style={{animationDelay: '0.6s'}}>
+                        <button 
+                            onClick={onOpenScanner}
+                            className={`pointer-events-auto text-black px-7 py-4 rounded-full flex items-center justify-center active:scale-[0.96] transition-transform font-medium text-[15px] tracking-wide ${isBulk ? 'bg-gradient-to-r from-indigo-400 to-purple-500 shadow-[0_10px_30px_rgba(99,102,241,0.3)]' : 'bg-gradient-to-r from-teal-400 to-emerald-500 shadow-[0_10px_30px_rgba(20,184,166,0.3)]'}`}
+                        >
+                            <Icon name="scan-line" size={22} className="mr-2" strokeWidth={2} />
+                            ESCANEAR ALIMENTO
+                        </button>
+                    </div>
+
+                    {isManualModalOpen && <ModalAjusteManual onClose={() => setIsManualModalOpen(false)} onSubmit={handleManualSubmit} themeColor={themeColor} />}
+                    {isSettingsOpen && (
+                        <ModalAjustes profile={profile} onClose={() => setIsSettingsOpen(false)} onReset={onResetProfile} apiKey={apiKey} saveApiKey={saveApiKey} />
+                    )}
+                </div>
+            );
+        }
+
+        const MacroCard = ({ label, current, max, isPrimary = false, themeColor }) => {
+            const isBulk = themeColor === '#818cf8';
+            const primaryBg = isBulk ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-teal-500/10 border-teal-500/20';
+            const primaryText = isBulk ? 'text-indigo-400' : 'text-teal-400';
+            const primaryBar = isBulk ? 'bg-indigo-400' : 'bg-teal-400';
+
+            return (
+                <div className={`p-4 rounded-2xl flex flex-col justify-between border ${isPrimary ? primaryBg : 'bg-white/5 border-white/5'}`}>
+                    <span className={`text-[10px] uppercase tracking-widest mb-2 font-medium ${isPrimary ? primaryText : 'text-zinc-500'}`}>{label}</span>
+                    <div className="mb-3">
+                        <span className="text-xl font-medium text-white">{Math.round(current)}</span>
+                        <span className="text-[10px] text-zinc-500 ml-1">/{max}g</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-black/50 rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full transition-all duration-1000 ${isPrimary ? primaryBar : 'bg-zinc-400'}`} style={{ width: `${Math.min(100, (current/max)*100)}%` }} />
+                    </div>
+                </div>
+            );
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* PANTALLA ESCÁNER IA                                                        */
+        /* -------------------------------------------------------------------------- */
+        function ScannerScreen({ onBack, onAddFood, profile, foods, apiKey, saveApiKey }) {
+            const [image, setImage] = useState(null);
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState('');
+            const [analyzedData, setAnalyzedData] = useState(null);
+            const [grams, setGrams] = useState(100);
+            const [tempKey, setTempKey] = useState('');
+            const [successSave, setSuccessSave] = useState(false); 
+
+            const isBulk = profile.goal === 'bulk';
+            const themeBtn = isBulk ? 'from-indigo-400 to-purple-500 shadow-[0_0_30px_rgba(99,102,241,0.3)]' : 'from-teal-400 to-emerald-500 shadow-[0_0_30px_rgba(20,184,166,0.3)]';
+            const themeText = isBulk ? 'text-indigo-400' : 'text-teal-400';
+
+            if (!apiKey) {
+                return (
+                    <div className="max-w-md mx-auto min-h-screen flex flex-col font-light animate-fade-in relative overflow-hidden">
+                        <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] pointer-events-none ${isBulk ? 'bg-purple-500/10' : 'bg-emerald-500/10'}`}></div>
+                        <div className="pt-12 pb-4 px-6 flex items-center sticky top-0 z-20">
+                            <button onClick={onBack} className="w-10 h-10 flex items-center justify-center -ml-2 text-zinc-400 hover:text-white transition-colors bg-white/5 rounded-full">
+                                <Icon name="x" size={22} />
+                            </button>
+                        </div>
+                        <div className="px-6 flex-1 flex flex-col justify-center mb-20">
+                            <div className="glass-card rounded-[32px] p-8 text-center relative overflow-hidden">
+                                <div className={`absolute -top-10 -right-10 w-32 h-32 rounded-full blur-2xl ${isBulk ? 'bg-indigo-500/20' : 'bg-teal-500/20'}`}></div>
+                                <div className={`w-20 h-20 border rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-3 ${isBulk ? 'bg-gradient-to-br from-indigo-400/20 to-purple-500/5 border-indigo-500/20' : 'bg-gradient-to-br from-teal-400/20 to-emerald-500/5 border-teal-500/20'}`}>
+                                    <Icon name="sparkles" size={32} className={`${themeText} -rotate-3`} />
+                                </div>
+                                <h3 className="text-2xl font-light text-white mb-3 tracking-tight">Activar IA</h3>
+                                <p className="text-sm text-zinc-400 mb-8 leading-relaxed">Conecta la API de Google Gemini para analizar alimentos con la cámara.</p>
+                                <input type="password" value={tempKey} onChange={(e) => setTempKey(e.target.value)} placeholder="API Key (AIzaSy...)" className="w-full premium-input bg-transparent rounded-2xl p-4 text-center text-sm text-white mb-4 outline-none" />
+                                <button onClick={() => saveApiKey(tempKey)} disabled={!tempKey.trim()} className="w-full bg-white text-black font-medium text-[15px] p-4 rounded-2xl active:scale-[0.98] transition-all disabled:opacity-50 flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+                                    <Icon name="lock" size={18} /> Activar Sistema
+                                </button>
+                                <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1 mt-6 text-[11px] uppercase tracking-widest transition-colors ${isBulk ? 'text-indigo-400/80 hover:text-indigo-300' : 'text-teal-400/80 hover:text-teal-300'}`}>
+                                    Obtener clave gratuita <Icon name="external-link" size={10} />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            const resizeImage = (file) => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const scaleSize = 800 / img.width;
+                            canvas.width = 800;
+                            canvas.height = img.height * scaleSize;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            resolve(canvas.toDataURL('image/jpeg', 0.8));
+                        };
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            const handleCapture = async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const base64 = await resizeImage(file);
+                    setImage(base64);
+                    setAnalyzedData(null);
+                    setError('');
+                }
+            };
+
+            const analyzeImage = async () => {
+                if (!image) return;
+                setLoading(true);
+                setError('');
+                try {
+                    const base64Data = image.split(',')[1];
+                    
+                    // PASO 1: Auto-Descubrimiento de Modelos Disponibles en tu API Key
+                    const modelsUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey.trim()}`;
+                    const modelsReq = await fetch(modelsUrl);
+                    if (!modelsReq.ok) {
+                        throw new Error("No se pudo conectar para ver los modelos. Verifica que la API Key sea de Google AI Studio.");
+                    }
+                    const modelsData = await modelsReq.json();
+                    
+                    // Filtramos los que sirven para generar contenido
+                    const validModels = (modelsData.models || []).filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes("generateContent"));
+                    if (validModels.length === 0) {
+                        throw new Error("Tu API Key no tiene acceso a ningún modelo compatible.");
+                    }
+
+                    // Elegimos el mejor modelo disponible (priorizando 1.5 flash)
+                    let finalModelObj = validModels.find(m => m.name.includes("gemini-1.5-flash")) || 
+                                        validModels.find(m => m.name.includes("gemini-1.5-pro")) || 
+                                        validModels.find(m => m.name.includes("vision")) || 
+                                        validModels[0];
+                    
+                    // El formato de finalModelObj.name ya viene como "models/gemini-..." de fábrica
+                    const finalModelName = finalModelObj.name;
+                    console.log("Modelo auto-detectado:", finalModelName);
+
+                    // PASO 2: Petición con Promt Puro (Sin configuraciones estrictas que causan Error 400)
+                    const promptText = `Analiza esta imagen de un alimento o etiqueta nutricional. 
+                    Devuelve SOLO un objeto JSON válido con los valores normalizados por 100 gramos.
+                    El JSON debe tener EXACTAMENTE esta estructura:
+                    {
+                      "foodName": "Nombre del alimento",
+                      "caloriesPer100g": 0,
+                      "proteinPer100g": 0,
+                      "carbsPer100g": 0,
+                      "fatPer100g": 0
+                    }
+                    No incluyas explicaciones ni etiquetas markdown, solo el JSON puro.`;
+
+                    const payload = {
+                        contents: [{
+                            role: "user",
+                            parts: [
+                                { text: promptText },
+                                { inlineData: { mimeType: "image/jpeg", data: base64Data } }
+                            ]
+                        }]
+                    };
+
+                    const generateUrl = `https://generativelanguage.googleapis.com/v1beta/${finalModelName}:generateContent?key=${apiKey.trim()}`;
+                    
+                    const data = await fetchWithRetry(generateUrl, { 
+                        method: "POST", 
+                        headers: { "Content-Type": "application/json" }, 
+                        body: JSON.stringify(payload) 
+                    });
+
+                    if (!data.candidates || data.candidates.length === 0) {
+                        throw new Error("La IA no devolvió resultados (Posible bloqueo por contenido).");
+                    }
+                    
+                    const candidate = data.candidates[0];
+                    if (candidate.finishReason !== 'STOP' && candidate.finishReason !== undefined) {
+                        throw new Error(`La IA detuvo el análisis. Motivo: ${candidate.finishReason}`);
+                    }
+
+                    if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
+                        throw new Error("La IA devolvió una respuesta vacía.");
+                    }
+
+                    let rawText = candidate.content.parts[0].text;
+                    let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                    const parsed = JSON.parse(cleanText);
+                    
+                    setAnalyzedData(parsed);
+                    suggestSmartPortion(parsed);
+                } catch (err) {
+                    console.error("Detalle del error:", err);
+                    
+                    if (err.status === 403 || (err.message && err.message.includes("API_KEY_INVALID"))) {
+                        setError("API Key inválida o caducada. Por favor, revísala en Ajustes.");
+                    } else {
+                        setError(`Error: ${err.message}`);
+                    }
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const consumedCals = foods.reduce((sum, f) => sum + (Number(f.calories) || 0), 0);
+            const consumedProtein = foods.reduce((sum, f) => sum + (Number(f.protein) || 0), 0);
+            const remainingCals = Math.max(0, profile.cals - consumedCals);
+            const remainingProtein = Math.max(0, profile.protein - consumedProtein);
+
+            const suggestSmartPortion = (data) => {
+                const aiData = data || analyzedData;
+                if (!aiData) return;
+                if (remainingCals <= 0) { setGrams(0); return; }
+                let gramsForProtein = aiData.proteinPer100g > 0 ? (remainingProtein / aiData.proteinPer100g) * 100 : Infinity;
+                let gramsForCals = aiData.caloriesPer100g > 0 ? (remainingCals / aiData.caloriesPer100g) * 100 : Infinity;
+                let suggestion = Math.min(gramsForProtein, gramsForCals);
+                if (suggestion > 500) suggestion = 200; 
+                if (suggestion < 0) suggestion = 0;
+                setGrams(Math.round(suggestion));
+            };
+
+            const handleSave = () => {
+                if (!analyzedData || grams <= 0) return;
+                setSuccessSave(true);
+                setTimeout(() => {
+                    const factor = grams / 100;
+                    onAddFood({
+                        name: analyzedData.foodName,
+                        grams: grams,
+                        calories: analyzedData.caloriesPer100g * factor,
+                        protein: analyzedData.proteinPer100g * factor,
+                        carbs: analyzedData.carbsPer100g * factor,
+                        fat: analyzedData.fatPer100g * factor
+                    });
+                }, 400); 
+            };
+
+            const calcCals = analyzedData ? (analyzedData.caloriesPer100g * (grams/100)) : 0;
+            const calcProt = analyzedData ? (analyzedData.proteinPer100g * (grams/100)) : 0;
+
+            return (
+                <div className="max-w-md mx-auto min-h-screen flex flex-col font-light animate-fade-in pb-10">
+                    <div className="pt-12 pb-4 px-6 flex items-center justify-between sticky top-0 z-20 bg-black/80 backdrop-blur-xl border-b border-white/5">
+                        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center -ml-2 text-zinc-400 hover:text-white transition-colors bg-white/5 rounded-full">
+                            <Icon name="x" size={22} />
+                        </button>
+                        <h2 className="text-[15px] font-medium text-white tracking-wide">Escáner IA</h2>
+                        <div className="w-10"></div>
+                    </div>
+
+                    <div className="px-6 mt-6 flex-1 flex flex-col">
+                        {!image ? (
+                            <div className="flex-1 flex flex-col items-center justify-center pb-20">
+                                <label className={`w-full aspect-[4/5] glass-card rounded-[32px] flex flex-col items-center justify-center text-zinc-400 cursor-pointer transition-all hover:bg-white/10 active:scale-[0.98] border-dashed border-2 border-white/10 group ${isBulk ? 'hover:border-indigo-500/50' : 'hover:border-teal-500/50'}`}>
+                                    <div className={`w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6 transition-colors ${isBulk ? 'group-hover:bg-indigo-500/10' : 'group-hover:bg-teal-500/10'}`}>
+                                        <Icon name="camera" size={36} strokeWidth={1.5} className={`text-zinc-500 transition-colors ${isBulk ? 'group-hover:text-indigo-400' : 'group-hover:text-teal-400'}`} />
+                                    </div>
+                                    <p className="font-medium text-lg text-white mb-2">Escanear Alimento</p>
+                                    <p className="text-sm text-zinc-500">Toca para abrir la cámara</p>
+                                    <input type="file" accept="image/*" capture="environment" className="hidden" onChange={handleCapture} />
+                                </label>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col gap-6">
+                                <div className="relative rounded-[32px] overflow-hidden bg-black h-72 border border-white/10 shadow-2xl">
+                                    <img src={image} alt="Preview" className={`w-full h-full object-cover transition-opacity duration-500 ${loading ? 'opacity-40 blur-sm' : 'opacity-80'}`} />
+                                    {loading && <div className="animate-laser" style={isBulk ? {background: '#818cf8', boxShadow: '0 0 15px 2px #818cf8'} : {}}></div>}
+                                    {!analyzedData && !loading && (
+                                        <div className="absolute top-4 right-4 z-10">
+                                            <button onClick={() => setImage(null)} className="bg-black/60 backdrop-blur-md w-10 h-10 flex items-center justify-center rounded-full text-zinc-300 hover:text-white border border-white/10">
+                                                <Icon name="trash-2" size={18} />
+                                            </button>
+                                        </div>
+                                    )}
+                                    {!analyzedData && !loading && (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                                            <button onClick={analyzeImage} className={`bg-gradient-to-r ${themeBtn} text-black font-semibold px-8 py-4 rounded-full flex items-center active:scale-[0.96] transition-all text-[15px] tracking-wide absolute bottom-6`}>
+                                                <Icon name="sparkles" size={18} className="mr-2" /> INICIAR ANÁLISIS
+                                            </button>
+                                        </div>
+                                    )}
+                                    {loading && (
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                            <Icon name="loader-2" size={40} className={`animate-spin mb-4 ${themeText}`} />
+                                            <p className="text-xs font-bold text-white tracking-[0.2em] uppercase">Procesando...</p>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {error && (
+                                    <div className="text-red-400 text-sm text-left p-5 border border-red-500/20 bg-red-500/10 rounded-2xl flex items-start gap-3 animate-fade-in">
+                                        <Icon name="alert-circle" size={20} className="shrink-0 mt-0.5" />
+                                        <div className="flex flex-col gap-2">
+                                            <span className="leading-relaxed">{error}</span>
+                                            <button onClick={() => setImage(null)} className="text-xs font-medium uppercase tracking-wider text-red-300 hover:text-white mt-1 w-fit">Intentar de nuevo</button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {analyzedData && (
+                                    <div className="animate-fade-in space-y-6 pb-6">
+                                        <div className="glass-card p-6 rounded-[28px] relative overflow-hidden">
+                                            <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl -mr-10 -mt-10 ${isBulk ? 'bg-indigo-500/10' : 'bg-teal-500/10'}`}></div>
+                                            <div className={`absolute top-5 right-5 text-[9px] font-bold px-2 py-1 rounded tracking-widest uppercase ${isBulk ? 'text-indigo-400 border border-indigo-500/30 bg-indigo-500/10' : 'text-teal-400 border border-teal-500/30 bg-teal-500/10'}`}>IA Verified</div>
+                                            <h3 className="text-xl font-medium text-white pr-20 mb-1">{analyzedData.foodName}</h3>
+                                            <p className="text-xs text-zinc-500 mb-5">Valores base por 100g</p>
+                                            <div className="flex gap-6 text-sm border-t border-white/5 pt-4">
+                                                <div><span className="text-zinc-500 text-[10px] uppercase tracking-widest block mb-1">Calorías</span><span className="text-white font-medium text-lg">{analyzedData.caloriesPer100g}</span></div>
+                                                <div><span className="text-zinc-500 text-[10px] uppercase tracking-widest block mb-1">Proteína</span><span className="text-white font-medium text-lg">{analyzedData.proteinPer100g}g</span></div>
+                                            </div>
+                                        </div>
+
+                                        <div className="glass-card p-6 rounded-[28px] space-y-6">
+                                            <div className="flex justify-between items-center">
+                                                <label className="text-[15px] font-medium text-white">Cantidad a añadir</label>
+                                                <button onClick={() => suggestSmartPortion()} className={`text-[10px] font-medium uppercase tracking-widest bg-white/5 px-3 py-2 rounded-lg border border-white/10 hover:bg-white/10 transition-colors ${themeText}`}>Sugerir Meta</button>
+                                            </div>
+                                            <div className="flex items-center gap-5">
+                                                <input type="range" min="0" max="500" step="5" value={grams} onChange={(e) => setGrams(Number(e.target.value))} />
+                                                <div className="w-24 premium-input bg-transparent rounded-xl flex items-center p-2">
+                                                    <input type="number" value={grams} onChange={(e) => setGrams(Number(e.target.value))} className="w-full bg-transparent text-center font-medium outline-none text-[15px] text-white" />
+                                                    <span className="text-xs text-zinc-500 pr-2">g</span>
+                                                </div>
+                                            </div>
+                                            <div className={`p-5 rounded-2xl border flex justify-between items-center transition-colors duration-500 ${calcCals > remainingCals ? 'bg-red-500/10 border-red-500/20 shadow-[inset_0_0_20px_rgba(239,68,68,0.1)]' : 'bg-black/50 border-white/5'}`}>
+                                                <div>
+                                                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1.5">Impacto Total</p>
+                                                    <p className={`text-2xl font-light tracking-tight ${calcCals > remainingCals ? 'text-red-400' : 'text-white'}`}>
+                                                        {Math.round(calcCals)} <span className="text-sm font-light text-zinc-500 tracking-normal">kcal</span>
+                                                    </p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className={`text-[15px] font-medium ${themeText}`}>+{Math.round(calcProt)}g P</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <button onClick={handleSave} className={`w-full font-medium text-[15px] tracking-wide p-4 rounded-2xl transition-all duration-300 flex justify-center items-center gap-2 ${successSave ? (isBulk ? 'bg-indigo-500 text-white scale-[0.98]' : 'bg-teal-500 text-white scale-[0.98]') : 'bg-white text-black active:scale-[0.98] shadow-[0_0_20px_rgba(255,255,255,0.1)]'}`}>
+                                            {successSave ? <Icon name="check" size={20} /> : <Icon name="plus" size={20}/>}
+                                            {successSave ? 'GUARDADO' : 'CONFIRMAR REGISTRO'}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* MODALES (NUEVA VERSIÓN CALCULO POR GRAMOS)                                 */
+        /* -------------------------------------------------------------------------- */
+        function ModalAjusteManual({ onClose, onSubmit, themeColor }) {
+            const [mName, setMName] = useState('');
+            const [mGrams, setMGrams] = useState(''); // Opcional
+            const [mCals, setMCals] = useState('');
+            const [mProt, setMProt] = useState('');
+
+            // Matemáticas en tiempo real
+            const safeGrams = Number(mGrams) || 0;
+            // Si el usuario no escribe gramos, asume factor de "1" para guardar el número total que introduzca
+            const factor = mGrams.trim() !== '' ? (safeGrams / 100) : 1; 
+
+            const totalCals = (Number(mCals) || 0) * factor;
+            const totalProt = (Number(mProt) || 0) * factor;
+
+            const isBulk = themeColor === '#818cf8';
+            const themeText = isBulk ? 'text-indigo-400' : 'text-teal-400';
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                onSubmit(mName, safeGrams, totalCals, totalProt);
+            };
+
+            return (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-fade-in">
+                    <div className="glass-card rounded-[32px] w-full max-w-sm p-6 relative">
+                        <button onClick={onClose} className="absolute top-5 right-5 text-zinc-500 hover:text-white"><Icon name="x" size={22} /></button>
+                        <h3 className="text-xl font-medium mb-2 text-white tracking-tight">Ajuste Manual</h3>
+                        
+                        <p className="text-[10px] text-zinc-400 mb-6 leading-relaxed">
+                            Introduce los valores <strong className="text-white">por 100g</strong> y los gramos consumidos. Si dejas los gramos en blanco, se guardarán los valores totales.
+                        </p>
+
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Alimento</label>
+                                <input required type="text" value={mName} onChange={e => setMName(e.target.value)} placeholder="Ej. Arroz blanco" className="w-full premium-input bg-transparent rounded-2xl p-4 text-[15px] mt-1.5 text-white outline-none" />
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Gramos</label>
+                                    <input type="number" value={mGrams} onChange={e => setMGrams(e.target.value)} placeholder="(Opcional)" className="w-full premium-input bg-transparent rounded-2xl p-4 text-[15px] mt-1.5 text-white outline-none" />
+                                </div>
+                                <div>
+                                    <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Calorías</label>
+                                    <input required type="number" value={mCals} onChange={e => setMCals(e.target.value)} placeholder="por 100g" className="w-full premium-input bg-transparent rounded-2xl p-4 text-[15px] mt-1.5 text-white outline-none" />
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium ml-1">Proteína (g)</label>
+                                <input type="number" value={mProt} onChange={e => setMProt(e.target.value)} placeholder="por 100g" className="w-full premium-input bg-transparent rounded-2xl p-4 text-[15px] mt-1.5 text-white outline-none" />
+                            </div>
+
+                            {/* Caja de previsualización del cálculo */}
+                            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 mt-2 flex justify-between items-center">
+                                <div>
+                                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1">Total a añadir</p>
+                                    <p className="text-xl font-medium text-white tracking-tight">{Math.round(totalCals)} <span className="text-xs font-light text-zinc-500">kcal</span></p>
+                                </div>
+                                <div className="text-right">
+                                    <p className={`text-[15px] font-medium ${themeText}`}>+{Math.round(totalProt)}g P</p>
+                                </div>
+                            </div>
+
+                            <button type="submit" className="w-full mt-4 bg-white text-black font-medium text-[15px] tracking-wide p-4 rounded-2xl active:scale-[0.98] transition-transform">
+                                AÑADIR AL DIARIO
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+
+        function ModalAjustes({ profile, onClose, onReset, apiKey, saveApiKey }) {
+            const [showConfirm, setShowConfirm] = useState(false);
+            const [localKey, setLocalKey] = useState(apiKey);
+            
+            const isBulk = profile.goal === 'bulk';
+
+            if (showConfirm) {
+                return (
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-fade-in">
+                        <div className="glass-card rounded-[32px] w-full max-w-sm p-8 text-center relative">
+                            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-5 border border-red-500/20">
+                                <Icon name="alert-triangle" size={32} className="text-red-500" />
+                            </div>
+                            <h3 className="text-xl font-medium mb-3 text-white tracking-tight">¿Estás seguro?</h3>
+                            <p className="text-sm text-zinc-400 mb-8 font-light leading-relaxed">
+                                Se borrará tu perfil, historial y configuración de IA. Esta acción no se puede deshacer.
+                            </p>
+                            <div className="flex flex-col gap-3">
+                                <button onClick={() => { onReset(); onClose(); }} className="w-full bg-red-500/10 text-red-500 border border-red-500/20 font-medium p-4 rounded-2xl active:scale-[0.98] transition-transform">
+                                    Sí, borrar todo
+                                </button>
+                                <button onClick={() => setShowConfirm(false)} className="w-full premium-input bg-transparent text-white font-medium p-4 rounded-2xl transition-colors hover:bg-white/5 outline-none">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-6 animate-fade-in">
+                    <div className="glass-card rounded-[32px] w-full max-w-sm p-6 relative flex flex-col">
+                        <button onClick={onClose} className="absolute top-6 right-6 text-zinc-500 hover:text-white transition-colors">
+                            <Icon name="x" size={22} />
+                        </button>
+                        <h3 className="text-xl font-medium mb-6 text-white tracking-tight ml-2">Ajustes</h3>
+                        
+                        <div className="bg-black/40 rounded-2xl p-5 mb-5 border border-white/5">
+                            <div className="flex justify-between items-center mb-3">
+                                <p className="text-xs text-zinc-500 uppercase tracking-widest font-medium">Perfil</p>
+                                <span className="text-white font-medium">{profile.name || 'Usuario'}</span>
+                            </div>
+                            <div className="flex justify-between items-center mb-3">
+                                <p className="text-xs text-zinc-500 uppercase tracking-widest font-medium">Meta Actual</p>
+                                <span className={`text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded ${isBulk ? 'bg-indigo-500/20 text-indigo-400' : 'bg-teal-500/20 text-teal-400'}`}>
+                                    {isBulk ? 'Volumen' : 'Definición'}
+                                </span>
+                            </div>
+                            <div className="flex justify-between items-center mb-3">
+                                <p className="text-xs text-zinc-500 uppercase tracking-widest font-medium">Calorías Diarias</p>
+                                <span className="text-white font-medium">{profile.cals} kcal</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <p className="text-xs text-zinc-500 uppercase tracking-widest font-medium">Proteína Meta</p>
+                                <span className="text-white font-medium">{profile.protein}g</span>
+                            </div>
+                        </div>
+
+                        <div className="bg-black/40 rounded-2xl p-5 mb-8 border border-white/5 space-y-3">
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="text-[10px] text-zinc-500 uppercase tracking-widest font-medium">API Key IA</label>
+                                {!apiKey && <span className="text-[9px] font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded uppercase tracking-wider">Requerida</span>}
+                            </div>
+                            <input 
+                                type="password" 
+                                value={localKey} 
+                                onChange={(e) => {
+                                    setLocalKey(e.target.value);
+                                    saveApiKey(e.target.value);
+                                }} 
+                                placeholder="Pega tu API Key aquí..."
+                                className="w-full premium-input bg-transparent rounded-xl p-3.5 text-sm text-white outline-none" 
+                            />
+                        </div>
+                        
+                        <button onClick={() => setShowConfirm(true)} className="w-full flex items-center justify-center gap-2 text-zinc-500 hover:text-red-400 font-medium text-sm p-4 rounded-2xl active:scale-[0.98] transition-colors">
+                            Cerrar sesión / Borrar cuenta
+                        </button>
+
+                        <div className="mt-8 mb-2 flex justify-center items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
+                            <div className="h-px bg-zinc-800 flex-1"></div>
+                            <p className="text-[9px] text-zinc-400 font-medium tracking-[0.2em] uppercase">
+                                Creado por Marcos Zabala Duro
+                            </p>
+                            <div className="h-px bg-zinc-800 flex-1"></div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
